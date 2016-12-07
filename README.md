@@ -4,7 +4,7 @@ This project contains the Dockerfile and all necessary scripts to build the Dock
 
 You can pull the ready-to-use image from the Docker Hub repository
                                      
-`docker pull dapi/teamcity-agent`
+`docker pull brandymint/teamcity-agent`
 
 # Start container example:
 
@@ -13,7 +13,7 @@ docker run -it -e SERVER_URL=teamcity.brandymint.ru \
   -v /opt/teamcity_agent_conf:/date/teamcity_agent/conf \
   -v /var/run/postgresql:/var/run/postgresql \
   -e AGENT_NAME=agent1 \
-  dapi/teamcity-agent
+  brandymint/teamcity-agent
 ```
 
 If you need to build your own image, you need to perform the following:
@@ -35,4 +35,11 @@ You can use your own base image with the operation system of your choice and JAV
 docker build -t teamcity-agent
 ```
 
-See our [detailed instructions] (https://hub.docker.com/r/dapi/teamcity-agent/) on how to use the image in the Docker Hub repository .
+See our [detailed instructions] (https://hub.docker.com/r/brandymint/teamcity-agent/) on how to use the image in the Docker Hub repository .
+
+4) Push to docker hub
+
+```
+docker tag IMAGE brandymint/teamcity-agent
+docker push brandymint/teamcity-agent
+```
