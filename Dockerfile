@@ -19,7 +19,7 @@ RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-
 RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 
 RUN apt-get update -q \
-  && apt-get -q -y install postgresql-client git curl less vim-tiny autoconf bison build-essential libpq-dev libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libmagickwand-dev imagemagick sqlite3 libsqlite3-de
+  && apt-get -q -y install postgresql-client git curl less vim-tiny autoconf bison build-essential libpq-dev libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libmagickwand-dev imagemagick sqlite3 libsqlite3-dev
 
 
 # GeoLiteCity
