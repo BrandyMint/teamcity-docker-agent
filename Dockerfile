@@ -36,7 +36,7 @@ RUN apt-get update -q && apt-get -q -y install postgresql-client libpq-dev
 
 # mysql-client
 
-RUN apt-get -q -y install libmysqlclient-dev
+RUN apt-get -q -y install libmysqlclient-dev mysql-client
 
 #
 # Install yarn
