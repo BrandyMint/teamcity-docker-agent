@@ -6,6 +6,8 @@ You can pull the ready-to-use image from the Docker Hub repository
                                      
 `docker pull brandymint/teamcity-agent`
 
+sources: https://github.com/JetBrains/teamcity-docker-minimal-agent
+
 # Start container example:
 
 ```

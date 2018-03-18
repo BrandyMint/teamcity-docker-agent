@@ -17,6 +17,9 @@ ENV SHELL /bin/bash
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
+# Install JVM (for teamcity-agent)
+
+RUN apt-get -q -y install default-jre default-jdk
 
 # Update to postgresql-9.5
 
@@ -45,7 +48,7 @@ RUN apt-get update -q \
 # PHP and composer
 #
 
-RUN apt-get install -q -y php-cli composer
+RUN apt-get install -q -y php-cli composer php-mbstring php-bcmath php-gd php-curl php-xml php-zip php-json php-cli php-mysql php-mcrypt php-fpm
 
 #
 # GeoLiteCity
@@ -91,7 +94,6 @@ RUN /bin/bash -c "echo \"[[ -s \$HOME/.nvm/nvm.sh ]] && . \$HOME/.nvm/nvm.sh\" >
 
 ENV NVM_DIR "$HOME/.nvm"
 
-# ENV NODE_VERSION stable
 ENV SHIPPABLE_NODE_VERSION=v8.9.4
 
 RUN . $HOME/.nvm/nvm.sh && \
@@ -100,6 +102,27 @@ RUN . $HOME/.nvm/nvm.sh && \
   nvm use default && \
   npm install bower gulp babel-cli -g --allow-root
 
+
+#
+# Собственно teamcity-agen
+# Отсюда: https://github.com/JetBrains/teamcity-docker-minimal-agent/blob/master/ubuntu/Dockerfile
+#
+
+VOLUME /data/teamcity_agent/conf
+ENV CONFIG_FILE /data/teamcity_agent/conf/buildAgent.properties
+LABEL dockerImage.teamcity.version="latest" \
+      dockerImage.teamcity.buildNumber="latest"
+
+COPY run-agent.sh /run-agent.sh
+COPY run-services.sh /run-services.sh
+COPY dist/buildagent /opt/buildagent
+
+RUN useradd -m buildagent && \
+    chmod +x /run-agent.sh /run-services.sh && sync
+
+CMD ["/run-services.sh"]
+
+EXPOSE 9090
 
 # Clear all
 # RUN apt-get purge -y -q autoconf bison build-essential libssl-dev zlib1g-dev && apt-get autoremove -y
