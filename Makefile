@@ -5,7 +5,7 @@ clean:
 	rm -fr ./dist
 
 prebuild:
-	wget http://teamcity.bang8.ru/update/buildAgent.zip
+	wget http://teamcity.brandymint.ru/update/buildAgent.zip
 	mkdir ./dist
 	unzip buildAgent.zip -d dist/buildagent
 	mv dist/buildagent/conf dist/buildagent/conf_dist
