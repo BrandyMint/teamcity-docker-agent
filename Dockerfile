@@ -65,17 +65,15 @@ RUN apt-get update -q \
 # GeoLiteCity
 #
 
-RUN wget -N http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz \
- && gunzip GeoLiteCity.dat.gz \
- && mkdir /usr/share/GeoIP \
- && mv GeoLiteCity.dat /usr/share/GeoIP/GeoLiteCity.dat
+RUN mkdir /usr/share/GeoIP
+COPY GeoLiteCity.dat /usr/share/GeoIP/
 
 #
 # Ruby
 #
 
 ENV PATH $HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
-ENV RUBY_VERSION 2.4.3
+ENV RUBY_VERSION 2.5.3
 
 RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build && \

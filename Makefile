@@ -1,4 +1,7 @@
-all: clean prebuild build push
+all: clean geoip prebuild build push
+
+geoip:
+	cp /usr/share/GeoIP/GeoLiteCity.dat .
 
 clean:
 	rm -f ./buildAgent.zip
