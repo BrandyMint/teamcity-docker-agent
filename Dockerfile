@@ -53,13 +53,13 @@ RUN apt-get update -q \
 # PHP and composer
 #
 
-RUN apt-get install -q -y php-cli composer php-mbstring php-bcmath php-gd php-curl php-xml php-zip php-json php-cli php-mysql php-mcrypt php-fpm
+# RUN apt-get install -q -y php-cli composer php-mbstring php-bcmath php-gd php-curl php-xml php-zip php-json php-cli php-mysql php-mcrypt php-fpm
 
 # Phalcon
-RUN apt-get remove -q php
-RUN curl -s https://packagecloud.io/install/repositories/phalcon/stable/script.deb.sh | bash
-RUN apt-get update -q
-RUN apt-get install php7.0-phalcon
+# RUN apt-get remove -q php
+# RUN curl -s https://packagecloud.io/install/repositories/phalcon/stable/script.deb.sh | bash
+# RUN apt-get update -q
+# RUN apt-get install php7.0-phalcon
 
 #
 # GeoLiteCity
