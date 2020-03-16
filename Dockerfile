@@ -1,5 +1,5 @@
 # FROM jetbrains/teamcity-minimal-agent:latest
-FROM ubuntu:latest
+FROM adoptopenjdk/openjdk8:latest
 
 MAINTAINER Danil Pismenny <danil@brandymint.com>
 
@@ -11,6 +11,11 @@ RUN apt-get clean \
      libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libmagickwand-dev imagemagick sqlite3 libsqlite3-dev telnet apt-transport-https
 
 RUN locale-gen en_US.UTF-8
+
+# timezone data
+RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime \
+  && apt-get -q install -y tzdata \
+  && dpkg-reconfigure --frontend noninteractive tzdata
 
 ENV HOME /root
 ENV SHELL /bin/bash
@@ -32,10 +37,6 @@ RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-
 RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 
 RUN apt-get update -q && apt-get -q -y install postgresql-client libpq-dev
-
-
-# timezone data
-RUN apt-get update -q && apt-get -q install -y tzdata
 
 
 # mysql-client
@@ -69,15 +70,46 @@ RUN apt-get update -q \
 # GeoLiteCity
 #
 
-RUN mkdir /usr/share/GeoIP
-COPY GeoLiteCity.dat /usr/share/GeoIP/
+# RUN mkdir /usr/share/GeoIP
+# COPY GeoLiteCity.dat /usr/share/GeoIP/
+
+#
+# ANDROID STUDIO
+#
+# Source https://github.com/saschpe/docker-android-sdk/blob/master/Dockerfile
+
+ARG android_api=29
+ARG android_build_tools=29.0.2
+
+LABEL description="Android SDK ${android_api} with build-tools ${android_build_tools}"
+
+ENV ANDROID_SDK_ROOT /opt/android-sdk-linux
+ENV ANDROID_HOME $ANDROID_SDK_ROOT
+ENV GLIBC 2.25-r0
+ENV PATH $PATH:$ANDROID_SDK_ROOT/tools/bin
+
+RUN apt-get install unzip \
+    && wget --quiet https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip -O /tmp/tools.zip \
+    && mkdir -p $ANDROID_SDK_ROOT \
+    && unzip -q /tmp/tools.zip -d $ANDROID_SDK_ROOT \
+    && rm -v /tmp/tools.zip \
+    && mkdir -p /root/.android/ \
+    && touch /root/.android/repositories.cfg
+RUN yes | sdkmanager \
+        "build-tools;${android_build_tools}" \
+        "platforms;android-${android_api}" >/dev/null \
+    && rm -rf  \
+        # Delete proguard docs and examples
+        $ANDROID_SDK_ROOT/tools/proguard/examples \
+        $ANDROID_SDK_ROOT/tools/proguard/docs \
+    && sdkmanager --list | sed -e '/Available Packages/q'
 
 #
 # Ruby
 #
 
 ENV PATH $HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
-ENV RUBY_VERSION 2.5.3
+ENV RUBY_VERSION 2.6.3
 
 RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build && \
@@ -117,7 +149,7 @@ RUN . $HOME/.nvm/nvm.sh && \
 
 
 #
-# Собственно teamcity-agen
+# Собственно teamcity-agent
 # Отсюда: https://github.com/JetBrains/teamcity-docker-minimal-agent/blob/master/ubuntu/Dockerfile
 #
 

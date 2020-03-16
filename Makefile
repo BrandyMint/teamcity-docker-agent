@@ -1,21 +1,21 @@
 all: clean geoip prebuild build push
 
 geoip:
-	cp /usr/share/GeoIP/GeoLiteCity.dat .
+	(test -f /usr/share/GeoIP/GeoLiteCity.dat && cp /usr/share/GeoIP/GeoLiteCity.dat .) || echo 'No GEO Lite city'
 
 clean:
-	rm -f ./buildAgent.zip
+	# rm -f ./buildAgent.zip
 	rm -fr ./dist
 
 prebuild:
-	wget http://teamcity.brandymint.ru/update/buildAgent.zip
+	test -f ./buildAgent.zip || wget http://teamcity.brandymint.ru/update/buildAgent.zip
 	mkdir ./dist
 	unzip buildAgent.zip -d dist/buildagent
 	mv dist/buildagent/conf dist/buildagent/conf_dist
 
 build:
-	docker build -t teamcity-agent .
+	docker build -t teamcity-android-agent .
 
 push:
-	docker tag teamcity-agent brandymint/teamcity-agent
-	docker push brandymint/teamcity-agent
+	docker tag teamcity-android-agent brandymint/teamcity-android-agent
+	docker push brandymint/teamcity-android-agent
