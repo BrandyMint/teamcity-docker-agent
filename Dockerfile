@@ -136,13 +136,12 @@ RUN /bin/bash -c "echo \"[[ -s \$HOME/.nvm/nvm.sh ]] && . \$HOME/.nvm/nvm.sh\" >
 
 ENV NVM_DIR "$HOME/.nvm"
 
-ENV SHIPPABLE_NODE_VERSION=v8.9.4
+ENV SHIPPABLE_NODE_VERSION=v10.16.3
 
 RUN . $HOME/.nvm/nvm.sh && \
   nvm install $SHIPPABLE_NODE_VERSION && \
   nvm alias default $SHIPPABLE_NODE_VERSION && \
-  nvm use default && \
-  npm install bower gulp babel-cli -g --allow-root
+  nvm use default
 
 
 #
