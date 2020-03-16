@@ -10,7 +10,7 @@ RUN apt-get clean \
   && apt-get install -q -y locales apt-utils git curl less vim-tiny autoconf bison build-essential \
      libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libmagickwand-dev imagemagick sqlite3 libsqlite3-dev telnet apt-transport-https
 
-RUN locale-gen en_US.UTF-8
+RUN locale-gen en_US.UTF-8 
 
 # timezone data
 RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime \
@@ -32,11 +32,11 @@ RUN apt-get -q -y install redis-server
 
 # Update to postgresql-9.5
 
-RUN apt-get -q -y install wget lsb-release
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
-RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
-
-RUN apt-get update -q && apt-get -q -y install postgresql-client libpq-dev
+RUN apt-get -q -y install wget lsb-release \
+  && sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list' \
+  && wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add - \
+  && apt-get update -q \
+  && apt-get -q -y install postgresql-client libpq-dev
 
 
 # mysql-client
@@ -47,12 +47,30 @@ RUN apt-get -q -y install libmysqlclient-dev mysql-client
 # Install yarn
 #
 
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-
-RUN apt-get update -q \
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+  && apt-get update -q \
   && apt-get install --no-install-recommends yarn
 
+
+#
+# Ruby
+#
+
+ENV PATH $HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
+ENV RUBY_VERSION 2.6.5
+
+RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv \
+  && git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build \
+  && rbenv install $RUBY_VERSION \
+  && rbenv global $RUBY_VERSION \
+  && gem install bundler json pg \
+  && rbenv rehash
+
+RUN echo 'eval "$(rbenv init -)"' >> $HOME/.profile \
+  && echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
+
+COPY .gemrc /root/.gemrc
 
 #
 # PHP and composer
@@ -103,27 +121,6 @@ RUN yes | sdkmanager \
         $ANDROID_SDK_ROOT/tools/proguard/examples \
         $ANDROID_SDK_ROOT/tools/proguard/docs \
     && sdkmanager --list | sed -e '/Available Packages/q'
-
-#
-# Ruby
-#
-
-ENV PATH $HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
-ENV RUBY_VERSION 2.6.3
-
-RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build && \
-  rbenv install $RUBY_VERSION && \
-  rbenv global $RUBY_VERSION
-
-RUN gem install --no-ri --no-rdoc bundler json pg
-RUN rbenv rehash
-
-# RUN 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-RUN echo 'eval "$(rbenv init -)"' >> $HOME/.profile
-RUN echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
-
-COPY .gemrc /root/.gemrc
 
 #
 # NVM
