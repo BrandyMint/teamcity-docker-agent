@@ -1,4 +1,8 @@
-## О важном
+## Docker контейнер для тестирования приложений на ruby, php с доступом mysql, postgresql, а также android studio
+
+[![Build Status](https://travis-ci.org/BrandyMint/teamcity-docker-agent.svg?branch=master)](https://travis-ci.org/BrandyMint/teamcity-docker-agent)
+
+## Создание образа
 
 > make
 
