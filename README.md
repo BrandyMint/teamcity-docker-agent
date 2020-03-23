@@ -13,8 +13,7 @@ docker run -it -e SERVER_URL=CI_SERVER_HOST \
   -e AGENT_NAME=agent1 \
   -v /opt/teamcity_agent_conf:/date/teamcity_agent/conf \
   -v /var/run/postgresql:/var/run/postgresql \
-  -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
-
+  -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock \
   brandymint/teamcity-android-agent
 ```
 
