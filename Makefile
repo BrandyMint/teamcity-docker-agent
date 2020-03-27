@@ -19,3 +19,6 @@ build:
 push:
 	docker tag teamcity-android-agent brandymint/teamcity-android-agent
 	docker push brandymint/teamcity-android-agent
+
+test: prebuild
+	./scripts/docker/build
