@@ -43,6 +43,10 @@ RUN apt-get -q -y install wget lsb-release \
 
 RUN apt-get -q -y install libmysqlclient-dev mysql-client
 
+# We need a python to build node-sass
+
+RUN apt-get -q -y install python
+
 #
 # Install yarn
 #
