@@ -26,6 +26,10 @@ ENV LC_ALL en_US.UTF-8
 
 RUN apt-get -q -y install default-jre default-jdk
 
+# Golang
+
+RUN apt-get -q -y install golang
+
 # redis-server
 
 RUN apt-get -q -y install redis-server
