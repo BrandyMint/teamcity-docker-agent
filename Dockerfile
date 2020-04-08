@@ -65,8 +65,7 @@ RUN git clone https://github.com/syndbg/goenv.git $HOME/.goenv \
   && goenv global $GOLANG_VERSION
 
 RUN echo 'eval "$(goenv init -)"' >> $HOME/.profile \
-  && echo 'eval "$(goenv init -)"' >> $HOME/.bashrc \
-
+  && echo 'eval "$(goenv init -)"' >> $HOME/.bashrc
 
 #
 # Ruby
