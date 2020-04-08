@@ -60,7 +60,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 ENV GOLANG_VERSION 1.13.9
 ENV GOENV_ROOT $HOME/.goenv
 ENV PATH $GOENV_ROOT/bin:$PATH
-RUN git clone https://github.com/syndbg/goenv.git ~/.goenv \
+RUN git clone https://github.com/syndbg/goenv.git $HOME/.goenv \
   && goenv install $GOLANG_VERSION \
   && goenv global $GOLANG_VERSION
 
@@ -75,12 +75,13 @@ RUN echo 'eval "$(goenv init -)"' >> $HOME/.profile \
 ENV PATH $HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
 ENV RUBY_VERSION 2.6.5
 
-RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv \
-  && git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build \
-  && rbenv install $RUBY_VERSION \
-  && rbenv global $RUBY_VERSION \
-  && gem install bundler json pg \
-  && rbenv rehash
+RUN git clone https://github.com/rbenv/rbenv.git $HOME/.rbenv \
+  && git clone https://github.com/rbenv/ruby-build.git $HOME/.rbenv/plugins/ruby-build
+
+RUN $HOME/.rbenv/bin/rbenv install $RUBY_VERSION \
+  && $HOME/.rbenv/bin/rbenv global $RUBY_VERSION \
+  && $HOME/.rbenv/shims/gem install bundler json pg \
+  && $HOME/.rbenv/bin/rbenv rehash
 
 RUN echo 'eval "$(rbenv init -)"' >> $HOME/.profile \
   && echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
