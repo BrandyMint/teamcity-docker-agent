@@ -1,14 +1,19 @@
-all: clean geoip prebuild build push
+all: clean GeoLiteCity.dat prebuild build push
 
-geoip:
+GeoLiteCity.dat:
 	(test -f /usr/share/GeoIP/GeoLiteCity.dat && cp /usr/share/GeoIP/GeoLiteCity.dat .) || echo 'No GEO Lite city'
 
 clean:
-	# rm -f ./buildAgent.zip
 	rm -fr ./dist
 
-prebuild:
-	test -f ./buildAgent.zip || wget http://teamcity.brandymint.ru/update/buildAgent.zip
+full_clean:
+	rm -f ./buildAgent.zip
+	rm -fr ./dist
+
+buildAgent.zip:
+	wget http://teamcity.brandymint.ru/update/buildAgent.zip
+
+prebuild: buildAgent.zip
 	mkdir ./dist
 	unzip buildAgent.zip -d dist/buildagent
 	mv dist/buildagent/conf dist/buildagent/conf_dist
