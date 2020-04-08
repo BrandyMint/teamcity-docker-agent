@@ -26,10 +26,6 @@ ENV LC_ALL en_US.UTF-8
 
 RUN apt-get -q -y install default-jre default-jdk
 
-# Golang
-
-RUN apt-get -q -y install golang
-
 # redis-server
 
 RUN apt-get -q -y install redis-server
@@ -41,7 +37,6 @@ RUN apt-get -q -y install wget lsb-release \
   && wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add - \
   && apt-get update -q \
   && apt-get -q -y install postgresql-client libpq-dev
-
 
 # mysql-client
 
@@ -60,6 +55,18 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && apt-get update -q \
   && apt-get install --no-install-recommends yarn
 
+# Golang and goenv
+
+ENV GOLANG_VERSION 1.13.9
+ENV GOENV_ROOT $HOME/.goenv
+ENV PATH $GOENV_ROOT/bin:$PATH
+RUN git clone https://github.com/syndbg/goenv.git $HOME/.goenv \
+  && goenv install $GOLANG_VERSION \
+  && goenv global $GOLANG_VERSION
+
+RUN echo 'eval "$(goenv init -)"' >> $HOME/.profile \
+  && echo 'eval "$(goenv init -)"' >> $HOME/.bashrc \
+
 
 #
 # Ruby
@@ -68,17 +75,19 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
 ENV PATH $HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
 ENV RUBY_VERSION 2.6.5
 
-RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv \
-  && git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build \
-  && rbenv install $RUBY_VERSION \
-  && rbenv global $RUBY_VERSION \
-  && gem install bundler json pg \
-  && rbenv rehash
+RUN git clone https://github.com/rbenv/rbenv.git $HOME/.rbenv \
+  && git clone https://github.com/rbenv/ruby-build.git $HOME/.rbenv/plugins/ruby-build
+
+RUN $HOME/.rbenv/bin/rbenv install $RUBY_VERSION \
+  && $HOME/.rbenv/bin/rbenv global $RUBY_VERSION \
+  && $HOME/.rbenv/shims/gem install bundler json pg \
+  && $HOME/.rbenv/bin/rbenv rehash
 
 RUN echo 'eval "$(rbenv init -)"' >> $HOME/.profile \
   && echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
 
 COPY .gemrc /root/.gemrc
+
 
 #
 # PHP and composer
