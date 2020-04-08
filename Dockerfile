@@ -26,10 +26,6 @@ ENV LC_ALL en_US.UTF-8
 
 RUN apt-get -q -y install default-jre default-jdk
 
-# Golang
-
-RUN apt-get -q -y install golang
-
 # redis-server
 
 RUN apt-get -q -y install redis-server
@@ -41,7 +37,6 @@ RUN apt-get -q -y install wget lsb-release \
   && wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add - \
   && apt-get update -q \
   && apt-get -q -y install postgresql-client libpq-dev
-
 
 # mysql-client
 
@@ -59,6 +54,18 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
   && apt-get update -q \
   && apt-get install --no-install-recommends yarn
+
+# Golang and goenv
+
+ENV GOLANG_VERSION 1.13.9
+ENV GOENV_ROOT $HOME/.goenv
+ENV PATH $GOENV_ROOT/bin:$PATH
+RUN git clone https://github.com/syndbg/goenv.git ~/.goenv \
+  && goenv install $GOLANG_VERSION \
+  && goenv global $GOLANG_VERSION
+
+RUN echo 'eval "$(goenv init -)"' >> $HOME/.profile \
+  && echo 'eval "$(goenv init -)"' >> $HOME/.bashrc \
 
 
 #
@@ -79,6 +86,7 @@ RUN echo 'eval "$(rbenv init -)"' >> $HOME/.profile \
   && echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
 
 COPY .gemrc /root/.gemrc
+
 
 #
 # PHP and composer
